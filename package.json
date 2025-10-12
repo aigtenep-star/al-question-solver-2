@@ -1,0 +1,25 @@
+{
+  "name": "ai-question-solver",
+  "version": "1.0.0",
+  "description": "AI-powered question solver for Physics, Chemistry, Math, and Biology with OCR and OpenAI integration.",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "fs": "0.0.1-security",
+    "openai": "^4.70.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "Your Name",
+  "license": "MIT"
+}

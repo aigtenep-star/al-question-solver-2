@@ -1,0 +1,50 @@
+[
+  {
+    "code": "B101",
+    "question": { 
+      "text": "Which organelle is called the powerhouse of the cell?", 
+      "image": null 
+    },
+    "options": [
+      "(1) Mitochondria",
+      "(2) Nucleus",
+      "(3) Ribosome",
+      "(4) Endoplasmic Reticulum"
+    ],
+    "correct_answer": "(1) Mitochondria",
+    "solution": {
+      "text": "Mitochondria produce ATP through cellular respiration, hence called the powerhouse of the cell.",
+      "image": null
+    },
+    "solution_steps": [
+      "Step 1: ATP is energy currency of the cell",
+      "Step 2: Mitochondria convert glucose to ATP via respiration",
+      "Step 3: Therefore mitochondria = powerhouse of cell",
+      "Final Answer: Mitochondria"
+    ]
+  },
+  {
+    "code": "B102",
+    "question": { 
+      "text": "DNA is composed of which four bases?", 
+      "image": null 
+    },
+    "options": [
+      "(1) Adenine, Thymine, Cytosine, Guanine",
+      "(2) Adenine, Uracil, Cytosine, Guanine",
+      "(3) Adenine, Thymine, Cytosine, Uracil",
+      "(4) Cytosine, Guanine, Thymine, Uracil"
+    ],
+    "correct_answer": "(1) Adenine, Thymine, Cytosine, Guanine",
+    "solution": {
+      "text": "DNA contains four bases: Adenine (A), Thymine (T), Cytosine (C), Guanine (G).",
+      "image": null
+    },
+    "solution_steps": [
+      "Step 1: Identify bases in DNA: A, T, C, G",
+      "Step 2: Recall that RNA has Uracil instead of Thymine",
+      "Step 3: Confirm DNA bases: A, T, C, G",
+      "Final Answer: Adenine, Thymine, Cytosine, Guanine"
+    ]
+  }
+]

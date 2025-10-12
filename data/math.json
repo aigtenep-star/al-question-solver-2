@@ -1,0 +1,50 @@
+[
+  {
+    "code": "M101",
+    "question": { 
+      "text": "Find the derivative of f(x) = x² + 3x + 5.", 
+      "image": null 
+    },
+    "options": [
+      "(1) 2x + 3",
+      "(2) x² + 3",
+      "(3) 2x + 5",
+      "(4) x² + 5"
+    ],
+    "correct_answer": "(1) 2x + 3",
+    "solution": {
+      "text": "f'(x) = d/dx (x² + 3x + 5) = 2x + 3",
+      "image": null
+    },
+    "solution_steps": [
+      "Step 1: Recall derivative rules: d/dx x^n = n*x^(n-1)",
+      "Step 2: Derivative of x² = 2x, derivative of 3x = 3, derivative of 5 = 0",
+      "Step 3: Sum: 2x + 3",
+      "Final Answer: 2x + 3"
+    ]
+  },
+  {
+    "code": "M102",
+    "question": { 
+      "text": "Integrate ∫(2x + 3) dx.", 
+      "image": null 
+    },
+    "options": [
+      "(1) x² + 3x + C",
+      "(2) 2x² + 3x + C",
+      "(3) x² + 3x",
+      "(4) x² + 3"
+    ],
+    "correct_answer": "(1) x² + 3x + C",
+    "solution": {
+      "text": "∫(2x + 3) dx = ∫2x dx + ∫3 dx = x² + 3x + C",
+      "image": null
+    },
+    "solution_steps": [
+      "Step 1: Split integral: ∫2x dx + ∫3 dx",
+      "Step 2: ∫2x dx = x², ∫3 dx = 3x",
+      "Step 3: Add constant of integration C",
+      "Final Answer: x² + 3x + C"
+    ]
+  }
+]

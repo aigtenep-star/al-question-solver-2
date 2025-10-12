@@ -1,0 +1,50 @@
+[
+  {
+    "code": "C120",
+    "question": { 
+      "text": "Write balanced reaction: sodium oxide with hydrochloric acid.", 
+      "image": null 
+    },
+    "options": [
+      "(1) Na2O + 2HCl → 2NaCl + H2O",
+      "(2) Na2O + HCl → NaCl + H2O",
+      "(3) Na2O + 2HCl → NaCl + H2O",
+      "(4) Na2O + HCl → 2NaCl + H2O"
+    ],
+    "correct_answer": "(1) Na2O + 2HCl → 2NaCl + H2O",
+    "solution": { 
+      "text": "$Na_{2}O + 2HCl → 2NaCl + H_{2}O$", 
+      "image": null 
+    },
+    "solution_steps": [
+      "Step 1: Skeleton reaction: Na2O + HCl → NaCl + H2O",
+      "Step 2: Balance Na: 2 on left → 2 NaCl on right",
+      "Step 3: Balance Cl: need 2 HCl",
+      "Step 4: Balance H: 2 H makes 1 H2O",
+      "Final: Na2O + 2HCl → 2NaCl + H2O"
+    ]
+  },
+  {
+    "code": "C121",
+    "question": {
+      "text": "Write the reaction of copper(II) oxide with sulfuric acid.",
+      "image": null
+    },
+    "options": [
+      "(1) CuO + H2SO4 → CuSO4 + H2O",
+      "(2) CuO + H2SO4 → Cu + H2O",
+      "(3) CuO + H2SO4 → CuSO4",
+      "(4) Cu + H2SO4 → CuSO4 + H2"
+    ],
+    "correct_answer": "(1) CuO + H2SO4 → CuSO4 + H2O",
+    "solution": {
+      "text": "$CuO + H_{2}SO_{4} → CuSO_{4} + H_{2}O$",
+      "image": null
+    },
+    "solution_steps": [
+      "Step 1: Skeleton reaction: CuO + H2SO4 → CuSO4 + H2O",
+      "Step 2: Check Cu, S, O, H — already balanced",
+      "Final: CuO + H2SO4 → CuSO4 + H2O"
+    ]
+  }
+]

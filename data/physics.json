@@ -1,0 +1,50 @@
+[
+  {
+    "code": "P101",
+    "question": { 
+      "text": "A body of mass 2 kg is moving with velocity 3 m/s. Calculate its kinetic energy.", 
+      "image": null 
+    },
+    "options": [
+      "(1) 9 J",
+      "(2) 6 J",
+      "(3) 3 J",
+      "(4) 12 J"
+    ],
+    "correct_answer": "(1) 9 J",
+    "solution": {
+      "text": "KE = 1/2 * m * v^2 = 1/2 * 2 * 3^2 = 9 J",
+      "image": null
+    },
+    "solution_steps": [
+      "Step 1: Write formula: KE = 1/2 * m * v^2",
+      "Step 2: Substitute values: m = 2 kg, v = 3 m/s",
+      "Step 3: Calculate: 1/2 * 2 * 9 = 9 J",
+      "Final Answer: KE = 9 J"
+    ]
+  },
+  {
+    "code": "P102",
+    "question": { 
+      "text": "If a force of 10 N acts on a mass of 2 kg, find its acceleration.", 
+      "image": null 
+    },
+    "options": [
+      "(1) 5 m/s²",
+      "(2) 10 m/s²",
+      "(3) 2 m/s²",
+      "(4) 20 m/s²"
+    ],
+    "correct_answer": "(1) 5 m/s²",
+    "solution": {
+      "text": "Using Newton's 2nd law: F = ma → a = F/m = 10/2 = 5 m/s²",
+      "image": null
+    },
+    "solution_steps": [
+      "Step 1: Use F = ma",
+      "Step 2: Solve for a: a = F/m",
+      "Step 3: Substitute values: a = 10 / 2 = 5 m/s²",
+      "Final Answer: a = 5 m/s²"
+    ]
+  }
+]
