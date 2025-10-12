@@ -168,12 +168,18 @@
       });
       const data = await res.json();
 let formatted = data.answer
-  .replaceAll("###", "<br><br><b>")       // turn markdown headers into bold
-  .replaceAll("**", "")                   // remove extra markdown bold markers
-  .replaceAll("-", "<br>•")               // convert dashes to bullet points
-  .replaceAll("\n", "<br>");              // handle newlines
+  // Highlight only "Step X:" parts
+  .replace(/(Step\s*\d+[:.]?)/gi, '<span style="color:#f1c40f; font-weight:bold;">$1</span>')
+  // Remove extra markdown
+  .replaceAll("**", "")
+  // Convert dashes to bullet points
+  .replaceAll("-", "<br>•")
+  // Convert newlines to HTML breaks
+  .replaceAll("\n", "<br>");
 
 return `<b>AI Answer:</b><br>${formatted}`;
+
+
 
     }
 
