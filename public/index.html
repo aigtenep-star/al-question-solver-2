@@ -100,12 +100,13 @@
   <script>
     let cropper = null, questionBanks = {}, fuseBanks = {};
 
-    const subjectUrls = {
-  chemistry: "https://your-render-app.onrender.com/chemistry",
-  physics: "https://your-render-app.onrender.com/physics",
-  math: "https://your-render-app.onrender.com/math",
-  biology: "https://your-render-app.onrender.com/biology"
+   const subjectUrls = {
+  chemistry: "https://ai-question-and-its-solution-4kxy.onrender.com/chemistry",
+  physics: "https://ai-question-and-its-solution-4kxy.onrender.com/physics",
+  math: "https://ai-question-and-its-solution-4kxy.onrender.com/math",
+  biology: "https://ai-question-and-its-solution-4kxy.onrender.com/biology"
 };
+
 
 
     for (let subj in subjectUrls) {
@@ -159,7 +160,8 @@
       }
 
       // 3️⃣ Fallback to AI
-     const res = await fetch("https://your-render-app.onrender.com/ask-ai",{
+     const res = await fetch("https://ai-question-and-its-solution-4kxy.onrender.com/ask-ai", {
+
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({question:text})
