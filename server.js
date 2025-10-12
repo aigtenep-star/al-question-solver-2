@@ -19,7 +19,17 @@ const client = new OpenAI({
 });
 
 const app = express();
-app.use(cors()); // optionally restrict origin in production
+
+// Serve static frontend from /public
+const publicDir = path.resolve("./public");
+if (fs.existsSync(publicDir)) {
+  app.use(express.static(publicDir));
+  console.log("Serving static files from /public");
+} else {
+  console.warn("Warning: public directory not found. No static files will be served.");
+}
+
+app.use(cors()); // in production, restrict origin: cors({ origin: "https://your-domain" })
 app.use(express.json());
 
 // Load local JSON question banks (with error handling)
@@ -57,7 +67,6 @@ app.post("/ask-ai", async (req, res) => {
     const question = (req.body?.question || "").toString().trim();
     if (!question) return res.status(400).json({ error: "No question provided in request body." });
 
-    // Use chat completions; adapt parameters as needed
     const response = await client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -67,7 +76,6 @@ app.post("/ask-ai", async (req, res) => {
       max_tokens: 1200,
     });
 
-    // Safely extract message content
     const assistantMessage =
       response?.choices?.[0]?.message?.content ??
       response?.choices?.[0]?.text ??
@@ -85,7 +93,18 @@ app.post("/ask-ai", async (req, res) => {
   }
 });
 
-// Optional health-check
+// Health-check
 app.get("/health", (req, res) => res.json({ status: "ok" }));
+
+// If a static index.html exists, express.static will serve it at '/'
+// Add a fallback root message if not
+app.get("/", (req, res) => {
+  const indexPath = path.join(publicDir, "index.html");
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.send("✅ AI Question Solver API is running. Use /ask-ai to POST questions.");
+  }
+});
 
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
