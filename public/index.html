@@ -166,8 +166,15 @@
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({question:text})
       });
-      const data=await res.json();
-      return `<b>AI Answer:</b><br>${data.answer}`;
+      const data = await res.json();
+let formatted = data.answer
+  .replaceAll("###", "<br><br><b>")       // turn markdown headers into bold
+  .replaceAll("**", "")                   // remove extra markdown bold markers
+  .replaceAll("-", "<br>•")               // convert dashes to bullet points
+  .replaceAll("\n", "<br>");              // handle newlines
+
+return `<b>AI Answer:</b><br>${formatted}`;
+
     }
 
     function searchByCode(code){
