@@ -168,8 +168,8 @@
       });
       const data = await res.json();
 let formatted = data.answer
-  // Highlight only "Step X:" parts
-  .replace(/(Step\s*\d+[:.]?)/gi, '<span style="color:#050b78; font-weight:bold;">$1</span>')
+  // Highlight only "Step X:" parts — blue and bold
+  .replace(/(Step\s*\d+[:.]?)/gi, '<span style="color:#007bff; font-weight:bold;">$1</span>')
   // Remove extra markdown
   .replaceAll("**", "")
   // Convert dashes to bullet points
@@ -177,7 +177,7 @@ let formatted = data.answer
   // Convert newlines to HTML breaks
   .replaceAll("\n", "<br>");
 
-return `<b>G10-EP AI Answer:</b><br>${formatted}`;
+return `<b>G10EP AI Answer:</b><br>${formatted}`;
 
 
 
