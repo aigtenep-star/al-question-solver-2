@@ -235,7 +235,7 @@
 
     // ====================== AI Solution ======================
     async function searchSolution(text){
-      const resp=await fetch("https://ai-question-and-its-solution-3oip.onrender.com/ask-ai",{
+      const resp=await fetch("https://al-question-solver-2.onrender.com/ask-ai",{
         method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({question:text})
       });
       if(!resp.ok){ resultBox.innerHTML="❌ Error fetching AI response."; return; }
@@ -265,10 +265,10 @@
 
     // ====================== Question Code Mode with Live Suggestions ======================
     const subjectUrls={
-      chemistry:"https://ai-question-and-its-solution-3oip.onrender.com/chemistry",
-      physics:"https://ai-question-and-its-solution-3oip.onrender.com/physics",
-      math:"https://ai-question-and-its-solution-3oip.onrender.com/math",
-      biology:"https://ai-question-and-its-solution-3oip.onrender.com/biology"
+      chemistry:"https://al-question-solver-2.onrender.com/chemistry",
+      physics:"https://al-question-solver-2.onrender.com/physics",
+      math:"https://al-question-solver-2.onrender.com/math",
+      biology:"https://al-question-solver-2.onrender.com/biology"
     };
     let questionBanks={}, fuseIndex={};
     const codeInput=document.getElementById("questionCode");
