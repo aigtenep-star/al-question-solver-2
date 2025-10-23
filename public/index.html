@@ -1,260 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Question Solver</title>
 
   <!-- Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
 
   <!-- MathJax -->
   <script>
-    window.MathJax = { tex: { inlineMath: [['\\(','\\)'], ['$', '$']] }, svg: { fontCache: 'global' } };
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      svg: { fontCache: 'global' },
+    };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding: 15px; background: #f4f6f9; margin: 0; }
-    h2 { color: #2c3e50; font-size: 1.4rem; }
+    body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f9; }
+    h2 { color: #2c3e50; font-size: 1.4rem; text-align: center; margin-top: 15px; }
+    .container { display: flex; flex-direction: row; min-height: 100vh; overflow: hidden; }
+    .side-panel-wrapper { width: 250px; flex-shrink: 0; display: flex; flex-direction: column; background: #2c3e50; color: white; transition: width 0.3s ease; position: sticky; top: 0; height: 100vh; }
+    .side-panel-wrapper.collapsed { width: 40px; }
+    .side-panel { flex: 1; overflow-y: auto; padding: 20px; box-sizing: border-box; }
+    .collapse-btn { background: #34495e; color: white; border: none; width: 100%; padding: 5px 0; cursor: pointer; font-size: 1rem; flex-shrink: 0; }
+    .side-panel img { width: 100%; border-radius: 10px; margin-bottom: 15px; transition: all 0.3s; }
+    .side-panel h3, .side-panel p, .side-panel ul, .side-panel a { transition: all 0.3s; }
+    .side-panel-wrapper.collapsed .side-panel * { display: none; }
+    .main-content { flex: 1; padding: 15px; text-align: center; overflow-y: auto; height: 100vh; box-sizing: border-box; }
     .mode-toggle { margin: 15px 0; }
     .toggle-label { margin: 0 10px; font-weight: bold; cursor: pointer; }
     .hidden { display: none; }
-    input[type="file"], textarea, input[type="text"] {
-      font-size: 1rem; padding: 10px; margin: 10px 0; width: 100%; max-width: 400px;
-    }
+    input[type="file"], textarea, input[type="text"] { font-size: 1rem; padding: 10px; margin: 10px 0; width: 100%; max-width: 400px; }
     textarea { height: 100px; resize: vertical; }
-    button { margin-top: 10px; padding: 12px 20px; background: #3498db; color: white; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer; }
-    button:hover { background: #2c80b9; }
-
-    .solution-box {
-      background: #fff;
-      border-radius: 10px;
-      padding: 15px;
-      margin-top: 15px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-      text-align: left;
-      font-size: 1rem;
-      line-height: 1.5;
-    }
-    .solution-box img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
-    .solution-step-list { list-style: none; padding-left: 0; margin-left: 0; }
-    .solution-step-list li {
-      background: #f0f4f8; padding: 10px 12px; margin-bottom: 8px; border-radius: 6px; line-height: 1.5;
-      transition: box-shadow 0.25s ease, transform 0.2s ease;
-    }
-    .solution-step-list li.step-numbered { background: #fff3cd; font-weight: 600; }
-    .solution-step-list li.step-numbered:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(-2px); }
-    .step-highlight { color: #f1c40f; font-weight: 600; }
-
-    #cropModal {
-      display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.85); justify-content: center; align-items: center; flex-direction: column;
-      padding: 15px; box-sizing: border-box;
-    }
+    button, label.btn { display: inline-block; margin-top: 10px; padding: 12px 20px; background: #3498db; color: white; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; }
+    button:hover, label.btn:hover { background: #2c80b9; }
+    .solution-box { position: relative; background: #fff; border-radius: 10px; padding: 15px; margin-top: 15px; box-shadow: 0 6px 18px rgba(0,0,0,0.06); text-align: left; font-size: 1rem; line-height: 1.5; overflow-x: auto; word-wrap: break-word; -webkit-overflow-scrolling: touch; }
+    .solution-box::before { content: ""; position: absolute; top: 50%; left: 50%; width: 300px; height: 300px; background: url("https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png") no-repeat center center; background-size: contain; opacity: 0.15; transform: translate(-50%, -50%); pointer-events: none; z-index: 0; }
+    .solution-box * { position: relative; z-index: 1; }
+    .solution-box h3, .solution-box h4, .solution-box strong, .solution-box b { color: #007bff !important; font-weight: 700; }
+    table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: top; }
+    th { background: #f2f2f2; color: #333; }
+    #cropModal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; flex-direction: column; padding: 15px; box-sizing: border-box; }
     #cropImage { max-width: 100%; max-height: 80%; border-radius: 6px; object-fit: contain; }
-    .modal-btn {
-      position: absolute; bottom: 20px; padding: 12px 20px;
-      background: #3498db; color: white; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer;
-    }
+    .modal-btn { position: absolute; bottom: 20px; padding: 12px 20px; background: #3498db; color: white; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer; }
     .modal-btn:hover { background: #2c80b9; }
-    #cancelCrop { left: 20px; background: #e74c3c; }
+    #cancelCrop { left: 20px; }
     #confirmCrop { right: 20px; }
-
-    #progressContainer { width: 100%; max-width: 400px; margin: 20px auto; display: none; }
-    #progressBar { width: 0%; height: 18px; background: #3498db; border-radius: 10px; transition: width 0.2s linear; }
-    #progressWrapper { width: 100%; background: #ddd; border-radius: 10px; overflow: hidden; }
-    #progressText { margin-top: 5px; font-weight: bold; color: #2c3e50; }
+    #autocomplete-list { position: absolute; background: white; border: 1px solid #ccc; max-height: 150px; overflow-y: auto; width: 100%; max-width: 400px; z-index: 1000; border-radius: 4px; text-align: left; }
+    #autocomplete-list div { padding: 8px; cursor: pointer; }
+    #autocomplete-list div:hover { background-color: #e2e6ea; }
+    @media (max-width: 768px) { .container { flex-direction: column; } .side-panel-wrapper { width: 100%; height: auto; position: relative; } .main-content { height: auto; } .solution-box::before { width: 200px; height: 200px; } }
+    @media (max-width: 480px) { .solution-box::before { width: 140px; height: 140px; opacity: 0.12; } }
+ 
+  .side-panel a {
+  color: red !important;
+  text-decoration: underline;
+}
+.side-panel a:hover {
+  color: #ff4d4d !important; /* lighter red on hover */
+}
   </style>
 </head>
 
 <body>
-  <h2>📚 AI Question Solver<br>(Physics | Chemistry | Math | Biology)</h2>
+  <div class="container">
+    <div class="side-panel-wrapper" id="sidePanelWrapper">
+      <button class="collapse-btn" id="collapseBtn">⬅️</button>
+      <div class="side-panel">
+        <img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png" alt="G10 Logo" />
+        <h3>G10 Educational Platform</h3>
+        <p>📚 Preparing students for Board exams, IIT-JEE, NEET, and CUET with expert guidance.</p>
+        <p>💡 Features:</p>
+        <ul>
+          <li>Live AI Question Solver</li>
+          <li>Video lectures & PDFs</li>
+          <li>Practice tests & MCQs</li>
+          <li>Expert doubt clearing</li>
+        </ul>
+        <p>🌐 Visit: <a href="https://www.g10educationalplatformindia.co.in/" target="_blank">WEBSITE</a></p>
+      </div>
+    </div>
 
-  <div class="mode-toggle">
-    <label class="toggle-label"><input type="radio" name="mode" value="image" checked> 📷 Upload Image</label>
-    <label class="toggle-label"><input type="radio" name="mode" value="text"> ✍️ Type Question</label>
-    <label class="toggle-label"><input type="radio" name="mode" value="code"> 🔢 Enter Question Code</label>
+    <div class="main-content">
+      <h2>📚 AI Question Solver<br>(Physics | Chemistry | Math | Biology)</h2>
+      <div class="mode-toggle">
+        <label class="toggle-label"><input type="radio" name="mode" value="image" checked /> 📷 Upload Image</label>
+        <label class="toggle-label"><input type="radio" name="mode" value="text" /> ✍️ Type Question</label>
+        <label class="toggle-label"><input type="radio" name="mode" value="code" /> 🔢 Enter Question Code</label>
+      </div>
+
+      <div id="imageMode">
+        <div class="flex gap-2">
+          <label for="cameraInput" class="btn">📷 Take Photo</label>
+          <label for="galleryInput" class="btn">🖼️ Upload from Gallery</label>
+        </div>
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" hidden />
+        <input type="file" id="galleryInput" accept="image/*" hidden />
+      </div>
+
+      <div id="textMode" class="hidden">
+        <textarea id="manualQuestion" placeholder="Type or paste your question here..."></textarea><br />
+        <button id="solveManual">🔍 Solve</button>
+      </div>
+
+      <div id="codeMode" class="hidden" style="position: relative;">
+        <input type="text" id="questionCode" placeholder="Enter question code or part of question..." autocomplete="off" /><br />
+        <div id="autocomplete-list"></div>
+        <button id="solveCode">🔍 Get Answer</button>
+      </div>
+
+      <div id="cropModal">
+        <img id="cropImage" alt="To Crop" />
+        <button id="cancelCrop" class="modal-btn">❌ Cancel</button>
+        <button id="confirmCrop" class="modal-btn">✂️ Crop & Solve</button>
+      </div>
+
+      <div class="solution-box" id="result">Select a mode and provide your question to see the solution.</div>
+    </div>
   </div>
-
-  <div id="imageMode"><input type="file" id="fileInput" accept="image/*" capture="environment"></div>
-  <div id="textMode" class="hidden"><textarea id="manualQuestion" placeholder="Type or paste your question here..."></textarea><br><button id="solveManual">🔍 Solve</button></div>
-  <div id="codeMode" class="hidden"><input type="text" id="questionCode" placeholder="Enter question code..."><br><button id="solveCode">🔍 Get Answer</button></div>
-
-  <div id="cropModal">
-    <img id="cropImage" alt="To Crop">
-    <button id="cancelCrop" class="modal-btn">❌ Cancel</button>
-    <button id="confirmCrop" class="modal-btn">✂️ Crop & Solve</button>
-  </div>
-
-  <div id="progressContainer">
-    <div id="progressWrapper"><div id="progressBar"></div></div>
-    <p id="progressText">Processing...</p>
-  </div>
-
-  <div class="solution-box" id="result">Select a mode and provide your question to see the solution.</div>
 
   <script>
-    let cropper = null, questionBanks = {}, fuseBanks = {};
+    // ===== Side Panel Collapse =====
+    const collapseBtn = document.getElementById("collapseBtn");
+    const sidePanelWrapper = document.getElementById("sidePanelWrapper");
+    collapseBtn.addEventListener("click", ()=>{ sidePanelWrapper.classList.toggle("collapsed"); collapseBtn.innerText = sidePanelWrapper.classList.contains("collapsed") ? "➡️" : "⬅️"; });
+    function handleResize(){ if(window.innerWidth<768){ sidePanelWrapper.classList.add("collapsed"); collapseBtn.innerText="➡️"; } else{ sidePanelWrapper.classList.remove("collapsed"); collapseBtn.innerText="⬅️"; } }
+    window.addEventListener("resize", handleResize); handleResize();
 
-   const subjectUrls = {
-  chemistry: "https://ai-question-and-its-solution-4kxy.onrender.com/chemistry",
-  physics: "https://ai-question-and-its-solution-4kxy.onrender.com/physics",
-  math: "https://ai-question-and-its-solution-4kxy.onrender.com/math",
-  biology: "https://ai-question-and-its-solution-4kxy.onrender.com/biology"
-};
-
-
-
-    for (let subj in subjectUrls) {
-      fetch(subjectUrls[subj])
-        .then(r => r.json())
-        .then(data => {
-          questionBanks[subj] = data;
-          fuseBanks[subj] = new Fuse(data, { keys: ["question.text"], threshold: 0.4 });
-        });
-    }
-
-    function renderQA(item, subj) {
-      let html = `<b>Subject:</b> ${subj}<br>`;
-      if(item.code) html += `<p><b>Code:</b> <span class="small">${item.code}</span></p>`;
-
-      let questionText = item.question?.text || "❌ Question not found";
-      html += `<p><b>Question:</b> <span class="mathjax">${questionText}</span></p>`;
-
-      let solutionText = item.solution?.text || "❌ Solution not found";
-      html += `<p><b>Solution:</b> <span class="mathjax">${solutionText}</span></p>`;
-
-      if(item.solution_steps && item.solution_steps.length){
-        html += `<p><b>Solution Steps:</b></p><ul class="solution-step-list">`;
-        item.solution_steps.forEach(step => {
-          let isNumbered = /Step\s*\d+/i.test(step);
-          let className = isNumbered ? 'step-numbered' : '';
-          let stepHtml = step.replace(/(Step\s*\d+)/ig, '<span class="step-highlight">$1</span>');
-          html += `<li class="${className}"><span class="mathjax">${stepHtml}</span></li>`;
-        });
-        html += `</ul>`;
-      }
-
-      setTimeout(()=>{ if(window.MathJax && MathJax.typeset) MathJax.typeset(); },50);
-      return html;
-    }
-
-    // ✅ Check database first, fallback to AI
-    async function searchSolution(text){
-      // 1️⃣ Exact match check
-      for(let subj in questionBanks){
-        const exactMatch = questionBanks[subj]?.find(q => q.question.text.trim().toLowerCase() === text.trim().toLowerCase());
-        if(exactMatch) return renderQA(exactMatch, subj);
-      }
-
-      // 2️⃣ Fuzzy match
-      for(let subj in fuseBanks){
-        const results = fuseBanks[subj].search(text);
-        if(results.length && results[0].score < 0.4){
-          return renderQA(results[0].item, subj);
-        }
-      }
-
-      // 3️⃣ Fallback to AI
-     const res = await fetch("https://ai-question-and-its-solution-4kxy.onrender.com/ask-ai", {
-
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({question:text})
-      });
-      const data = await res.json();
-let formatted = data.answer
-  // Highlight only "Step X:" parts — blue and bold
-  .replace(/(Step\s*\d+[:.]?)/gi, '<span style="color:#007bff; font-weight:bold;">$1</span>')
-  // Remove extra markdown
-  .replaceAll("**", "")
-  // Convert dashes to bullet points
-  .replaceAll("-", "<br>•")
-  // Convert newlines to HTML breaks
-  .replaceAll("\n", "<br>");
-
-return `<b>G10EP AI Answer:</b><br>${formatted}`;
-
-
-
-    }
-
-    function searchByCode(code){
-      for(let subj in questionBanks){
-        const q=questionBanks[subj]?.find(x=>String(x.code).toUpperCase()===code.toUpperCase());
-        if(q) return renderQA(q,subj);
-      }
-      return "❌ No question found with this code.";
-    }
-
-    document.querySelectorAll('input[name="mode"]').forEach(r=>{
-      r.addEventListener("change",e=>{
-        document.getElementById("imageMode").classList.toggle("hidden",e.target.value!=="image");
-        document.getElementById("textMode").classList.toggle("hidden",e.target.value!=="text");
-        document.getElementById("codeMode").classList.toggle("hidden",e.target.value!=="code");
-      });
-    });
-
-    const fileInput=document.getElementById("fileInput");
+    // ===== Image Upload & Mobile-Friendly OCR =====
+    let cropper=null;
     const cropModal=document.getElementById("cropModal");
     const cropImage=document.getElementById("cropImage");
     const confirmCrop=document.getElementById("confirmCrop");
     const cancelCrop=document.getElementById("cancelCrop");
     const resultBox=document.getElementById("result");
-    const progressContainer=document.getElementById("progressContainer");
-    const progressBar=document.getElementById("progressBar");
-    const progressText=document.getElementById("progressText");
 
-    fileInput.addEventListener("change",(e)=>{
-      const file=e.target.files[0];
-      if(!file) return;
+    const handleFile=(e)=>{
+      const file=e.target.files[0]; if(!file) return;
       cropImage.src=URL.createObjectURL(file);
       cropModal.style.display="flex";
-      if(cropper) cropper.destroy();
-      cropper=new Cropper(cropImage,{viewMode:1});
-    });
+      cropImage.onload=()=>{
+        if(cropper) cropper.destroy();
+        cropper=new Cropper(cropImage,{ viewMode:1, autoCropArea:1, movable:true, zoomable:true, responsive:true });
+      };
+    };
+    document.getElementById("cameraInput").addEventListener("change", handleFile);
+    document.getElementById("galleryInput").addEventListener("change", handleFile);
 
-    cancelCrop.onclick=()=>{cropModal.style.display="none"; cropper?.destroy(); cropper=null;}
+    cancelCrop.onclick=()=>{ cropModal.style.display="none"; cropper?.destroy(); cropper=null; };
 
     confirmCrop.onclick=async()=>{
       if(!cropper) return;
       cropModal.style.display="none";
-      const canvas=cropper.getCroppedCanvas();
+      const canvas=cropper.getCroppedCanvas({width:1500,height:1500});
+      const ctx=canvas.getContext("2d");
+      ctx.filter="contrast(150%) brightness(110%)"; // mobile-friendly enhancement
       cropper.destroy(); cropper=null;
-
-      progressContainer.style.display="block";
-      progressBar.style.width="10%";
-      progressText.textContent="🧠 Reading question from image...";
-
+      resultBox.innerHTML="⏳ Reading and solving question...";
       const blob=await new Promise(res=>canvas.toBlob(res,"image/png"));
-      const {data:{text}}=await Tesseract.recognize(blob,"eng",{logger:(m)=>{if(m.status==="recognizing text"){progressBar.style.width=Math.min(10+m.progress*70,80)+"%";}}});
+      const { data } = await Tesseract.recognize(blob,"eng");
+      const text=data.text.trim();
+      if(!text || data.confidence<40){ // lowered threshold for mobile
+        resultBox.innerHTML="⚠️ Image unclear. Please retake a clearer photo for mobile streaming.";
+        return;
+      }
+      resultBox.innerHTML=`<b>Extracted Text:</b><br>${text.replace(/\n/g,"<br>")}<br><br>`;
+      await searchSolution(text);
+    };
 
-      progressBar.style.width="85%";
-      progressText.textContent="🔍 Searching or generating answer...";
-      const answerHTML=await searchSolution(text);
-      progressBar.style.width="100%";
-      progressContainer.style.display="none";
-      resultBox.innerHTML=`<b>Extracted:</b><br>${text}<hr>${answerHTML}`;
-      MathJax.typeset();
+    function markdownToHTML(md){
+      const lines=md.split("\n"); let tableBlocks=[],table=[];
+      for(let line of lines){ if(line.trim().startsWith("|")) table.push(line); else { if(table.length>0){ tableBlocks.push(table.join("\n")); table=[]; } } }
+      if(table.length>0) tableBlocks.push(table.join("\n"));
+      tableBlocks.forEach(tbl=>{
+        const rows=tbl.trim().split("\n").filter(r=>r.includes("|"));
+        const htmlRows=rows.map((row,i)=>{
+          const cols=row.split("|").map(c=>c.trim()).filter(c=>c!=="");
+          if(i===0) return `<thead><tr>${cols.map(c=>`<th>${c}</th>`).join("")}</tr></thead>`;
+          if(i===1) return "";
+          return `<tr>${cols.map(c=>`<td>${c}</td>`).join("")}</tr>`;
+        }).join("");
+        md=md.replace(tbl,`<table>${htmlRows}</table>`);
+      });
+      return md;
     }
 
-    document.getElementById("solveManual").addEventListener("click",async()=>{
+    // ===== AI Solution =====
+    async function searchSolution(text){
+      const resp=await fetch("https://ai-question-and-its-solution-3oip.onrender.com/ask-ai",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({question:text}) });
+      if(!resp.ok){ resultBox.innerHTML="❌ Error fetching AI response."; return; }
+      resultBox.innerHTML=`<b>G10EP AI Answer (streaming):</b><br><div id="streamOutput" style="white-space:pre-wrap;"></div>`;
+      const streamDiv=document.getElementById("streamOutput");
+      const reader=resp.body.getReader(); const decoder=new TextDecoder(); let full="";
+      while(true){
+        const {done,value}=await reader.read(); if(done) break;
+        const chunk=decoder.decode(value,{stream:true}); full+=chunk;
+        let processed=markdownToHTML(full).replace(/(Step\s*\d+[:.]?)/gi,'<b style="color:#007bff">$1</b>').replace(/^###\s*(.*)$/gm,'<h3>$1</h3>').replaceAll("**","").replaceAll("- ","<br>• ").replace(/\n{2,}/g,"<br><br>").replace(/\n/g,"<br>");
+        streamDiv.innerHTML=processed;
+        clearTimeout(window._mjTimer); window._mjTimer=setTimeout(()=>MathJax.typesetPromise([streamDiv]),200);
+      }
+      await MathJax.typesetPromise([streamDiv]);
+    }
+
+    document.getElementById("solveManual").onclick=async()=>{
       const text=document.getElementById("manualQuestion").value.trim();
       if(!text) return alert("Please enter a question.");
-      resultBox.innerHTML="⏳ Solving...";
-      const answerHTML=await searchSolution(text);
-      resultBox.innerHTML=answerHTML;
-      MathJax.typeset();
+      resultBox.innerHTML="⏳ Searching...";
+      await searchSolution(text);
+    };
+
+    // ===== Question Code Mode =====
+    const subjectUrls={chemistry:"https://ai-question-and-its-solution-3oip.onrender.com/chemistry",physics:"https://ai-question-and-its-solution-3oip.onrender.com/physics",math:"https://ai-question-and-its-solution-3oip.onrender.com/math",biology:"https://ai-question-and-its-solution-3oip.onrender.com/biology"};
+    let questionBanks={}, fuseIndex={};
+    const codeInput=document.getElementById("questionCode");
+    const autoList=document.getElementById("autocomplete-list");
+
+    for(let subj in subjectUrls){
+      fuseIndex[subj]=new Fuse([], { keys: ["code","question.text"], threshold: 0.3 });
+      fetch(subjectUrls[subj]).then(r=>r.json()).then(data=>{ questionBanks[subj]=data; fuseIndex[subj]=new Fuse(data, { keys: ["code","question.text"], threshold: 0.3 }); }).catch(()=>{});
+    }
+
+    function renderQA(item, subj){
+      let html=`<b>Subject:</b> ${subj}<br>`; if(item.code) html+=`<p><b>Code:</b> <span class="small">${item.code}</span></p>`;
+      html+=`<p><b>Question:</b> <span class="mathjax">${item.question?.text||"❌ Question not found"}</span></p>`;
+      html+=`<p><b>Solution:</b> <span class="mathjax">${item.solution?.text||"❌ Solution not found"}</span></p>`;
+      if(item.solution_steps?.length){ html+=`<p><b>Solution Steps:</b></p><ul class="solution-step-list">`; item.solution_steps.forEach(step=>{ const stepHtml=step.replace(/(Step\s*\d+[:.]?)/gi,'<b style="color:#007bff">$1</b>').replace(/^###\s*(.*)$/gm,'<h3>$1</h3>'); html+=`<li><span class="mathjax">${stepHtml}</span></li>`; }); html+=`</ul>`; }
+      setTimeout(()=>{ MathJax.typesetPromise([document.getElementById("result")]); },60);
+      return html;
+    }
+
+    codeInput.addEventListener("input",()=>{
+      const val=codeInput.value.trim().toUpperCase();
+      autoList.innerHTML="";
+      if(!val) return;
+      for(let subj in fuseIndex){
+        const res=fuseIndex[subj].search(val);
+        res.slice(0,5).forEach(r=>{
+          const div=document.createElement("div");
+          const snippet=r.item.question?.text?.substring(0,50).replace(/\n/g," ") || "";
+          div.innerText=`[${subj}] ${r.item.code} — ${snippet}...`;
+          div.onclick=()=>{ codeInput.value=r.item.code; autoList.innerHTML=""; resultBox.innerHTML=renderQA(r.item, subj); };
+          autoList.appendChild(div);
+        });
+      }
     });
 
-    document.getElementById("solveCode").addEventListener("click",()=>{
-      const code=document.getElementById("questionCode").value.trim();
-      resultBox.innerHTML=searchByCode(code);
-      MathJax.typeset();
+    document.addEventListener("click",e=>{ if(e.target!==codeInput) autoList.innerHTML=""; });
+
+    document.getElementById("solveCode").onclick=()=>{
+      const code=codeInput.value.trim().toUpperCase();
+      if(!code) return alert("Please enter a question code.");
+      resultBox.innerHTML="⏳ Searching question code...";
+      let found=false;
+      for(let subj in fuseIndex){
+        const res=fuseIndex[subj].search(code);
+        if(res.length>0){ resultBox.innerHTML=renderQA(res[0].item, subj); found=true; break; }
+      }
+      if(!found) resultBox.innerHTML="❌ No question found with this code.";
+    };
+
+    document.querySelectorAll('input[name="mode"]').forEach(r=>{
+      r.addEventListener("change", e=>{
+        document.getElementById("imageMode").classList.toggle("hidden", e.target.value!=="image");
+        document.getElementById("textMode").classList.toggle("hidden", e.target.value!=="text");
+        document.getElementById("codeMode").classList.toggle("hidden", e.target.value!=="code");
+      });
     });
   </script>
 </body>
