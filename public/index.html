@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -23,95 +23,53 @@
   <style>
     body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f9; }
     h2 { color: #2c3e50; font-size: 1.4rem; text-align: center; margin-top: 15px; }
-
-    /* Container with side panel */
     .container { display: flex; flex-direction: row; min-height: 100vh; overflow: hidden; }
-
-    /* Left side panel */
-    .side-panel-wrapper {
-      width: 250px;
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      background: #2c3e50;
-      color: white;
-      transition: width 0.3s ease, height 0.3s ease;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-    }
+    .side-panel-wrapper { width: 250px; flex-shrink: 0; display: flex; flex-direction: column; background: #2c3e50; color: white; transition: width 0.3s ease; position: sticky; top: 0; height: 100vh; }
     .side-panel-wrapper.collapsed { width: 40px; }
-    .side-panel {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    .collapse-btn {
-      background: #34495e;
-      color: white;
-      border: none;
-      width: 100%;
-      padding: 5px 0;
-      cursor: pointer;
-      font-size: 1rem;
-      flex-shrink: 0;
-      touch-action: manipulation;
-    }
+    .side-panel { flex: 1; overflow-y: auto; padding: 20px; box-sizing: border-box; }
+    .collapse-btn { background: #34495e; color: white; border: none; width: 100%; padding: 5px 0; cursor: pointer; font-size: 1rem; flex-shrink: 0; }
     .side-panel img { width: 100%; border-radius: 10px; margin-bottom: 15px; transition: all 0.3s; }
     .side-panel h3, .side-panel p, .side-panel ul, .side-panel a { transition: all 0.3s; }
     .side-panel-wrapper.collapsed .side-panel * { display: none; }
-
-    /* Right main content */
     .main-content { flex: 1; padding: 15px; text-align: center; overflow-y: auto; height: 100vh; box-sizing: border-box; }
-
-    .mode-toggle { margin: 15px 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-    .toggle-label { font-weight: bold; cursor: pointer; }
+    .mode-toggle { margin: 15px 0; }
+    .toggle-label { margin: 0 10px; font-weight: bold; cursor: pointer; }
     .hidden { display: none; }
-    input[type="file"], textarea, input[type="text"] { font-size: 1rem; padding: 10px; margin: 10px 0; width: 100%; max-width: 400px; box-sizing: border-box; }
+    input[type="file"], textarea, input[type="text"] { font-size: 1rem; padding: 10px; margin: 10px 0; width: 100%; max-width: 400px; }
     textarea { height: 100px; resize: vertical; }
-    button, label.btn { display: inline-block; margin-top: 10px; padding: 12px 20px; background: #3498db; color: white; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; width: 100%; max-width: 400px; }
+    button, label.btn { display: inline-block; margin-top: 10px; padding: 12px 20px; background: #3498db; color: white; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; }
     button:hover, label.btn:hover { background: #2c80b9; }
-
     .solution-box { position: relative; background: #fff; border-radius: 10px; padding: 15px; margin-top: 15px; box-shadow: 0 6px 18px rgba(0,0,0,0.06); text-align: left; font-size: 1rem; line-height: 1.5; overflow-x: auto; word-wrap: break-word; -webkit-overflow-scrolling: touch; }
-    .solution-box::before { content: ""; position: absolute; top: 50%; left: 50%; width: 300px; height: 300px; background: url("https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png") no-repeat center center; background-size: contain; opacity: 0.15; transform: translate(-50%, -50%); pointer-events: none; z-index: 0; transition: width 0.3s, height 0.3s; }
+    .solution-box::before { content: ""; position: absolute; top: 50%; left: 50%; width: 300px; height: 300px; background: url("https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png") no-repeat center center; background-size: contain; opacity: 0.15; transform: translate(-50%, -50%); pointer-events: none; z-index: 0; }
     .solution-box * { position: relative; z-index: 1; }
     .solution-box h3, .solution-box h4, .solution-box strong, .solution-box b { color: #007bff !important; font-weight: 700; }
     table { border-collapse: collapse; width: 100%; margin: 10px 0; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: top; }
     th { background: #f2f2f2; color: #333; }
-
     #cropModal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; flex-direction: column; padding: 15px; box-sizing: border-box; }
     #cropImage { max-width: 100%; max-height: 80%; border-radius: 6px; object-fit: contain; }
     .modal-btn { position: absolute; bottom: 20px; padding: 12px 20px; background: #3498db; color: white; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer; }
     .modal-btn:hover { background: #2c80b9; }
     #cancelCrop { left: 20px; }
     #confirmCrop { right: 20px; }
-
     #autocomplete-list { position: absolute; background: white; border: 1px solid #ccc; max-height: 150px; overflow-y: auto; width: 100%; max-width: 400px; z-index: 1000; border-radius: 4px; text-align: left; }
     #autocomplete-list div { padding: 8px; cursor: pointer; }
     #autocomplete-list div:hover { background-color: #e2e6ea; }
-
-    /* ==================== Responsive Styles ==================== */
-    @media (max-width: 768px) {
-      .container { flex-direction: column; }
-      .side-panel-wrapper { width: 100%; height: auto; position: relative; }
-      .side-panel-wrapper.collapsed { height: 0; overflow: hidden; }
-      .main-content { height: auto; padding: 10px; }
-      .solution-box::before { width: 200px; height: 200px; }
-      input[type="text"], textarea, button, label.btn { max-width: 100%; }
-    }
-    @media (max-width: 480px) {
-      .solution-box::before { width: 140px; height: 140px; opacity: 0.12; }
-      h2 { font-size: 1.2rem; }
-      .mode-toggle { flex-direction: column; }
-    }
+    @media (max-width: 768px) { .container { flex-direction: column; } .side-panel-wrapper { width: 100%; height: auto; position: relative; } .main-content { height: auto; } .solution-box::before { width: 200px; height: 200px; } }
+    @media (max-width: 480px) { .solution-box::before { width: 140px; height: 140px; opacity: 0.12; } }
+ 
+  .side-panel a {
+  color: red !important;
+  text-decoration: underline;
+}
+.side-panel a:hover {
+  color: #ff4d4d !important; /* lighter red on hover */
+}
   </style>
 </head>
 
 <body>
   <div class="container">
-    <!-- Left Side Panel -->
     <div class="side-panel-wrapper" id="sidePanelWrapper">
       <button class="collapse-btn" id="collapseBtn">⬅️</button>
       <div class="side-panel">
@@ -125,14 +83,12 @@
           <li>Practice tests & MCQs</li>
           <li>Expert doubt clearing</li>
         </ul>
-        <p>🌐 Visit: <a href="https://g10educationalplatform.com" target="_blank">g10educationalplatform.com</a></p>
+        <p>🌐 Visit: <a href="https://www.g10educationalplatformindia.co.in/" target="_blank">WEBSITE</a></p>
       </div>
     </div>
 
-    <!-- Right Main Content -->
     <div class="main-content">
       <h2>📚 AI Question Solver<br>(Physics | Chemistry | Math | Biology)</h2>
-
       <div class="mode-toggle">
         <label class="toggle-label"><input type="radio" name="mode" value="image" checked /> 📷 Upload Image</label>
         <label class="toggle-label"><input type="radio" name="mode" value="text" /> ✍️ Type Question</label>
@@ -170,48 +126,50 @@
   </div>
 
   <script>
+    // ===== Side Panel Collapse =====
     const collapseBtn = document.getElementById("collapseBtn");
     const sidePanelWrapper = document.getElementById("sidePanelWrapper");
+    collapseBtn.addEventListener("click", ()=>{ sidePanelWrapper.classList.toggle("collapsed"); collapseBtn.innerText = sidePanelWrapper.classList.contains("collapsed") ? "➡️" : "⬅️"; });
+    function handleResize(){ if(window.innerWidth<768){ sidePanelWrapper.classList.add("collapsed"); collapseBtn.innerText="➡️"; } else{ sidePanelWrapper.classList.remove("collapsed"); collapseBtn.innerText="⬅️"; } }
+    window.addEventListener("resize", handleResize); handleResize();
 
-    // ====================== Collapse Behavior ======================
-    // Initial collapse only for small screens
-    if(window.innerWidth <= 768) sidePanelWrapper.classList.add("collapsed");
-    collapseBtn.innerText = sidePanelWrapper.classList.contains("collapsed") ? "➡️" : "⬅️";
+    // ===== Image Upload & Mobile-Friendly OCR =====
+    let cropper=null;
+    const cropModal=document.getElementById("cropModal");
+    const cropImage=document.getElementById("cropImage");
+    const confirmCrop=document.getElementById("confirmCrop");
+    const cancelCrop=document.getElementById("cancelCrop");
+    const resultBox=document.getElementById("result");
 
-    collapseBtn.addEventListener("click", ()=>{
-      sidePanelWrapper.classList.toggle("collapsed");
-      collapseBtn.innerText = sidePanelWrapper.classList.contains("collapsed") ? "➡️" : "⬅️";
-    });
-   // ====================== Image Upload & OCR ======================
-    let cropper = null;
-    const cropModal = document.getElementById("cropModal");
-    const cropImage = document.getElementById("cropImage");
-    const confirmCrop = document.getElementById("confirmCrop");
-    const cancelCrop = document.getElementById("cancelCrop");
-    const resultBox = document.getElementById("result");
-
-    const handleFile = (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      cropImage.src = URL.createObjectURL(file);
-      cropModal.style.display = "flex";
-      cropImage.onload = () => {
-        if (cropper) cropper.destroy();
-        cropper = new Cropper(cropImage, { viewMode: 1, autoCropArea: 1, movable: true, zoomable: true, responsive: true });
+    const handleFile=(e)=>{
+      const file=e.target.files[0]; if(!file) return;
+      cropImage.src=URL.createObjectURL(file);
+      cropModal.style.display="flex";
+      cropImage.onload=()=>{
+        if(cropper) cropper.destroy();
+        cropper=new Cropper(cropImage,{ viewMode:1, autoCropArea:1, movable:true, zoomable:true, responsive:true });
       };
     };
     document.getElementById("cameraInput").addEventListener("change", handleFile);
     document.getElementById("galleryInput").addEventListener("change", handleFile);
 
-    cancelCrop.onclick = () => { cropModal.style.display = "none"; cropper?.destroy(); cropper=null; };
-    confirmCrop.onclick = async () => {
-      if (!cropper) return;
-      cropModal.style.display = "none";
-      const canvas = cropper.getCroppedCanvas();
+    cancelCrop.onclick=()=>{ cropModal.style.display="none"; cropper?.destroy(); cropper=null; };
+
+    confirmCrop.onclick=async()=>{
+      if(!cropper) return;
+      cropModal.style.display="none";
+      const canvas=cropper.getCroppedCanvas({width:1500,height:1500});
+      const ctx=canvas.getContext("2d");
+      ctx.filter="contrast(150%) brightness(110%)"; // mobile-friendly enhancement
       cropper.destroy(); cropper=null;
       resultBox.innerHTML="⏳ Reading and solving question...";
-      const blob = await new Promise(res=>canvas.toBlob(res,"image/png"));
-      const { data: { text } } = await Tesseract.recognize(blob,"eng");
+      const blob=await new Promise(res=>canvas.toBlob(res,"image/png"));
+      const { data } = await Tesseract.recognize(blob,"eng");
+      const text=data.text.trim();
+      if(!text || data.confidence<40){ // lowered threshold for mobile
+        resultBox.innerHTML="⚠️ Image unclear. Please retake a clearer photo for mobile streaming.";
+        return;
+      }
       resultBox.innerHTML=`<b>Extracted Text:</b><br>${text.replace(/\n/g,"<br>")}<br><br>`;
       await searchSolution(text);
     };
@@ -233,11 +191,9 @@
       return md;
     }
 
-    // ====================== AI Solution ======================
+    // ===== AI Solution =====
     async function searchSolution(text){
-      const resp=await fetch("https://al-question-solver-2.onrender.com/ask-ai",{
-        method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({question:text})
-      });
+      const resp=await fetch("https://al-question-solver-2.onrender.com/ask-ai",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({question:text}) });
       if(!resp.ok){ resultBox.innerHTML="❌ Error fetching AI response."; return; }
       resultBox.innerHTML=`<b>G10EP AI Answer (streaming):</b><br><div id="streamOutput" style="white-space:pre-wrap;"></div>`;
       const streamDiv=document.getElementById("streamOutput");
@@ -245,64 +201,41 @@
       while(true){
         const {done,value}=await reader.read(); if(done) break;
         const chunk=decoder.decode(value,{stream:true}); full+=chunk;
-        let processed=markdownToHTML(full)
-          .replace(/(Step\s*\d+[:.]?)/gi,'<b style="color:#007bff">$1</b>')
-          .replace(/^###\s*(.*)$/gm,'<h3>$1</h3>')
-          .replaceAll("**","").replaceAll("- ","<br>• ")
-          .replace(/\n{2,}/g,"<br><br>").replace(/\n/g,"<br>");
+        let processed=markdownToHTML(full).replace(/(Step\s*\d+[:.]?)/gi,'<b style="color:#007bff">$1</b>').replace(/^###\s*(.*)$/gm,'<h3>$1</h3>').replaceAll("**","").replaceAll("- ","<br>• ").replace(/\n{2,}/g,"<br><br>").replace(/\n/g,"<br>");
         streamDiv.innerHTML=processed;
         clearTimeout(window._mjTimer); window._mjTimer=setTimeout(()=>MathJax.typesetPromise([streamDiv]),200);
       }
       await MathJax.typesetPromise([streamDiv]);
     }
 
-    document.getElementById("solveManual").onclick = async ()=>{
+    document.getElementById("solveManual").onclick=async()=>{
       const text=document.getElementById("manualQuestion").value.trim();
       if(!text) return alert("Please enter a question.");
       resultBox.innerHTML="⏳ Searching...";
       await searchSolution(text);
     };
 
-    // ====================== Question Code Mode with Live Suggestions ======================
-    const subjectUrls={
-      chemistry:"https://al-question-solver-2.onrender.com/chemistry",
-      physics:"https://al-question-solver-2.onrender.com/physics",
-      math:"https://al-question-solver-2.onrender.com/math",
-      biology:"https://al-question-solver-2.onrender.com/biology"
-    };
+    // ===== Question Code Mode =====
+    const subjectUrls={chemistry:"https://al-question-solver-2.onrender.com/chemistry",physics:"https://al-question-solver-2.onrender.com/physics",math:"https://al-question-solver-2.onrender.com/math",biology:"https://al-question-solver-2.onrender.com/biology"};
     let questionBanks={}, fuseIndex={};
     const codeInput=document.getElementById("questionCode");
     const autoList=document.getElementById("autocomplete-list");
 
     for(let subj in subjectUrls){
       fuseIndex[subj]=new Fuse([], { keys: ["code","question.text"], threshold: 0.3 });
-      fetch(subjectUrls[subj])
-        .then(r=>r.json())
-        .then(data=>{
-          questionBanks[subj]=data;
-          fuseIndex[subj]=new Fuse(data, { keys: ["code","question.text"], threshold: 0.3 });
-        }).catch(()=>{});
+      fetch(subjectUrls[subj]).then(r=>r.json()).then(data=>{ questionBanks[subj]=data; fuseIndex[subj]=new Fuse(data, { keys: ["code","question.text"], threshold: 0.3 }); }).catch(()=>{});
     }
 
     function renderQA(item, subj){
-      let html=`<b>Subject:</b> ${subj}<br>`;
-      if(item.code) html+=`<p><b>Code:</b> <span class="small">${item.code}</span></p>`;
+      let html=`<b>Subject:</b> ${subj}<br>`; if(item.code) html+=`<p><b>Code:</b> <span class="small">${item.code}</span></p>`;
       html+=`<p><b>Question:</b> <span class="mathjax">${item.question?.text||"❌ Question not found"}</span></p>`;
       html+=`<p><b>Solution:</b> <span class="mathjax">${item.solution?.text||"❌ Solution not found"}</span></p>`;
-      if(item.solution_steps?.length){
-        html+=`<p><b>Solution Steps:</b></p><ul class="solution-step-list">`;
-        item.solution_steps.forEach(step=>{
-          const stepHtml=step.replace(/(Step\s*\d+[:.]?)/gi,'<b style="color:#007bff">$1</b>').replace(/^###\s*(.*)$/gm,'<h3>$1</h3>');
-          html+=`<li><span class="mathjax">${stepHtml}</span></li>`;
-        });
-        html+=`</ul>`;
-      }
+      if(item.solution_steps?.length){ html+=`<p><b>Solution Steps:</b></p><ul class="solution-step-list">`; item.solution_steps.forEach(step=>{ const stepHtml=step.replace(/(Step\s*\d+[:.]?)/gi,'<b style="color:#007bff">$1</b>').replace(/^###\s*(.*)$/gm,'<h3>$1</h3>'); html+=`<li><span class="mathjax">${stepHtml}</span></li>`; }); html+=`</ul>`; }
       setTimeout(()=>{ MathJax.typesetPromise([document.getElementById("result")]); },60);
       return html;
     }
 
-    // ====================== Live Autocomplete ======================
-    codeInput.addEventListener("input", ()=>{
+    codeInput.addEventListener("input",()=>{
       const val=codeInput.value.trim().toUpperCase();
       autoList.innerHTML="";
       if(!val) return;
@@ -312,19 +245,15 @@
           const div=document.createElement("div");
           const snippet=r.item.question?.text?.substring(0,50).replace(/\n/g," ") || "";
           div.innerText=`[${subj}] ${r.item.code} — ${snippet}...`;
-          div.onclick=()=>{ 
-            codeInput.value=r.item.code;
-            autoList.innerHTML="";
-            resultBox.innerHTML=renderQA(r.item, subj);
-          };
+          div.onclick=()=>{ codeInput.value=r.item.code; autoList.innerHTML=""; resultBox.innerHTML=renderQA(r.item, subj); };
           autoList.appendChild(div);
         });
       }
     });
 
-    document.addEventListener("click", e=>{ if(e.target!==codeInput) autoList.innerHTML=""; });
+    document.addEventListener("click",e=>{ if(e.target!==codeInput) autoList.innerHTML=""; });
 
-    document.getElementById("solveCode").onclick = ()=>{
+    document.getElementById("solveCode").onclick=()=>{
       const code=codeInput.value.trim().toUpperCase();
       if(!code) return alert("Please enter a question code.");
       resultBox.innerHTML="⏳ Searching question code...";
@@ -336,7 +265,6 @@
       if(!found) resultBox.innerHTML="❌ No question found with this code.";
     };
 
-    // ====================== Mode Toggle ======================
     document.querySelectorAll('input[name="mode"]').forEach(r=>{
       r.addEventListener("change", e=>{
         document.getElementById("imageMode").classList.toggle("hidden", e.target.value!=="image");
